@@ -6,9 +6,13 @@ import Utils from "@/utils/Utils";
 
 import SeniorityInputButton from "@/views/seniority/SeniorityInputButton";
 
+interface SeniorityPageProps {
+    mode: 'forward' | 'reverse';
+}
+
 const inputSplit: string = getComputedStyle(document.body).getPropertyValue("--ca-seniority-split").replaceAll("\"", "");
 
-const SeniorityPage: React.FC = () => {
+const SeniorityPage: React.FC<SeniorityPageProps> = (props) => {
     const [content, setContent] = useState<string[]>([]);
     const [result, setResult] = useState<string[]>([]);
     const displayContainerRef = useRef<HTMLDivElement>(null);
@@ -28,9 +32,12 @@ const SeniorityPage: React.FC = () => {
             return;
         }
 
-        setResult(relationship({ text: content.join(inputSplit) }));
+        setResult(relationship({
+            text: content.join(inputSplit),
+            reverse: props.mode === 'reverse'
+        }));
         Utils.scrollToEnd(displayContainerRef.current, 0, 1);
-    }, [content]);
+    }, [content, props.mode]);
 
     useEmitter([
         ["seniority-input", async (buttonName: string, buttonId: string) => {
